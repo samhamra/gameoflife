@@ -21,14 +21,14 @@ public class ModelTest {
     }
 
     @Test
-    public void testLivingNeighboursInCenter() {
+    public void calculateLivingNeighbours_ShouldBe8ForAllInCenter_WhenAllAlive() {
         setUpAllAlive();
         int livingNeighbours = model.calculateLivingNeighbours(5,5);
         assertEquals(livingNeighbours, 8, "There should be 8 living neighbours in the center");
     }
 
     @Test
-    public void testLivingNeighboursInCorners() {
+    public void calculateLivingNeighbours_ShouldReturn3ForAllCorners_WhenAllAlive() {
         setUpAllAlive();
         int maxRows = model.getRows();
         int maxColumns = model.getColumns();
@@ -43,7 +43,7 @@ public class ModelTest {
     }
 
     @Test
-    public void testNoLivingNeighbours() {
+    public void calculateLivingNeighbours_ShouldBeNone_WhenAllDead() {
         setUpAllDead();
         int livingNeighboursInCenter = model.calculateLivingNeighbours(3,3);
         int livingNeighboursInCorner = model.calculateLivingNeighbours(model.getRows()-1,model.getColumns()-1);
@@ -52,7 +52,7 @@ public class ModelTest {
     }
 
     @Test
-    public void testNextGenerationWithAllDead() {
+    public void nextGeneration_ShouldNotImpactState_WhenAllDead() {
         setUpAllDead();
         model.nextGeneration();
         int livingNeighboursInCenter = model.calculateLivingNeighbours(3,3);
@@ -62,7 +62,7 @@ public class ModelTest {
     }
 
     @Test
-    public void testNextGenerationWithAllAlive() {
+    public void nextGeneration_ShouldImpactState_WhenAllAlive() {
         setUpAllAlive();
         model.nextGeneration();
         int livingNeighboursInCorner = model.calculateLivingNeighbours(0,0);
@@ -74,7 +74,7 @@ public class ModelTest {
     }
 
     @Test
-    public void testToggleValueAtPos() {
+    public void toggleValueAtPos_ShouldOnlyChangeValueAtPos() {
         setUpAllDead();
         assertEquals(model.getValueAtPos(0, 0), false, "The top left cell should still be dead");
         model.toggleValueAtPos(0, 0);

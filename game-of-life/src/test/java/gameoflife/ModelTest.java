@@ -5,12 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
-
-/**
- * Unit test for simple App.
- */
 public class ModelTest {
-
     private Model model;
 
     private void setUpAllDead() {
@@ -18,13 +13,12 @@ public class ModelTest {
     }
 
     private void setUpAllAlive() {
-        boolean[][] seed = new boolean[30][30];
+        boolean[][] seed = new boolean[Model.DEFAULT_ROWS][Model.DEFAULT_COLUMNS];
         for (boolean[] row : seed) {
             Arrays.fill(row, true);
         }
-        model = new Model(30,30, seed);
+        model = new Model(Model.DEFAULT_ROWS, Model.DEFAULT_COLUMNS, seed);
     }
-
 
     @Test
     public void testLivingNeighboursInCenter() {
@@ -36,10 +30,12 @@ public class ModelTest {
     @Test
     public void testLivingNeighboursInCorners() {
         setUpAllAlive();
+        int maxRows = model.getRows();
+        int maxColumns = model.getColumns();
         int livingNeighboursTopLeftCorner = model.calculateLivingNeighbours(0,0);
-        int livingNeighboursTopRightCorner = model.calculateLivingNeighbours(0,29);
-        int livingNeighboursBottomLeftCorner = model.calculateLivingNeighbours(29,0);
-        int livingNeighboursBottomRightCorner = model.calculateLivingNeighbours(29,29);
+        int livingNeighboursTopRightCorner = model.calculateLivingNeighbours(0, maxColumns-1);
+        int livingNeighboursBottomLeftCorner = model.calculateLivingNeighbours(maxRows-1,0);
+        int livingNeighboursBottomRightCorner = model.calculateLivingNeighbours(maxRows-1,maxColumns-1);
         assertEquals(livingNeighboursTopLeftCorner, 3, "There should be 3 living neighbours in the top left corner");
         assertEquals(livingNeighboursTopRightCorner, 3, "There should be 3 living neighbours in the top right corner");
         assertEquals(livingNeighboursBottomLeftCorner, 3, "There should be 3 living neighbours in the top right corner");
@@ -50,7 +46,7 @@ public class ModelTest {
     public void testNoLivingNeighbours() {
         setUpAllDead();
         int livingNeighboursInCenter = model.calculateLivingNeighbours(3,3);
-        int livingNeighboursInCorner = model.calculateLivingNeighbours(29,29);
+        int livingNeighboursInCorner = model.calculateLivingNeighbours(model.getRows()-1,model.getColumns()-1);
         assertEquals(livingNeighboursInCenter, 0, "There should be no living neighbours in the center");
         assertEquals(livingNeighboursInCorner, 0, "There should be no living neighbours the corner");
     }
@@ -60,7 +56,7 @@ public class ModelTest {
         setUpAllDead();
         model.nextGeneration();
         int livingNeighboursInCenter = model.calculateLivingNeighbours(3,3);
-        int livingNeighboursInCorner = model.calculateLivingNeighbours(29,29);
+        int livingNeighboursInCorner = model.calculateLivingNeighbours(model.getRows()-1,model.getColumns()-1);
         assertEquals(livingNeighboursInCenter, 0, "There should be no living neighbours in the center");
         assertEquals(livingNeighboursInCorner, 0, "There should be no living neighbours the corner");
     }
@@ -75,8 +71,14 @@ public class ModelTest {
         assertEquals(livingNeighboursInCorner, 0, "There should be no living neighbours in the corner");
         assertEquals(livingNeighboursInCenter, 0, "There should be no living neighbours in the corner");
         assertEquals(isCornerAlive, true, "The corner cell should still be alive" );
-
     }
 
-
+    @Test
+    public void testToggleValueAtPos() {
+        setUpAllDead();
+        assertEquals(model.getValueAtPos(0, 0), false, "The top left cell should still be dead");
+        model.toggleValueAtPos(0, 0);
+        assertEquals(model.getValueAtPos(0, 0), true, "The top left cell should now be alive");
+        assertEquals(model.getValueAtPos(0,1), false, "Other cells should still be dead");
+    }
 }
